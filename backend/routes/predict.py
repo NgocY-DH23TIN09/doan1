@@ -3,12 +3,12 @@ from models import PatientInput, PredictionResult
 import joblib
 import numpy as np
 import os
-from google import genai
+from groq import Groq
 from dotenv import load_dotenv
 from utils.limiter import limiter
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GROQ_API_KEY")
 
 router = APIRouter()
 
@@ -93,10 +93,10 @@ async def predict(request: Request, patient: PatientInput):
 
     recommendation = RECOMMENDATIONS[risk_level]
 
-    # Sinh lời khuyên từ Gemini AI nếu có key
+    # Sinh lời khuyên từ Groq AI nếu có key
     if api_key:
         try:
-            client = genai.Client(api_key=api_key)
+            client = Groq(api_key=api_key)
             prompt = f"""Là một chuyên gia tư vấn y tế (bác sĩ nội tiết), hãy phân tích cụ thể và đưa ra lời khuyên chi tiết, tận tình bằng tiếng Việt cho bệnh nhân:
 - Mức nguy cơ tiểu đường: {risk_level} ({risk_percentage}%)
 - Tuổi: {patient.age}, BMI: {patient.bmi}
@@ -110,15 +110,20 @@ Cấu trúc trả lời:
 4. Lời khuyên thăm khám y tế.
 Lưu ý: Không chào hỏi. Trình bày rõ ràng, có xuống dòng hợp lý."""
             
-            response = client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=prompt
+            response = client.chat.completions.create(
+                model='llama-3.1-8b-instant',
+                messages=[
+                    {"role": "system", "content": "Bạn là một chuyên gia tư vấn y tế nội tiết"},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1024,
+                temperature=0.7
             )
-            if response and response.text:
-                recommendation = "🤖 [AI Tư Vấn]\n\n" + response.text.strip()
+            if response and response.choices:
+                recommendation = "🤖 [AI Tư Vấn]\n\n" + response.choices[0].message.content.strip()
         except Exception as e:
-            print("Error calling Gemini API:", e)
-            recommendation = RECOMMENDATIONS[risk_level] + "\n\n*(Lưu ý: Hệ thống AI Gemini hiện đang hết hạn mức API hoặc quá tải. Đây là lời khuyên dự phòng cơ bản)*"
+            print(f"Lỗi gọi Groq API: {e}")
+            recommendation = RECOMMENDATIONS[risk_level] + "\n\n*(Lưu ý: Hệ thống AI Groq hiện không khả dụng. Đây là lời khuyên dự phòng cơ bản)*"
 
     return PredictionResult(
         risk_score=round(risk_probability, 4),

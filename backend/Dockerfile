@@ -1,17 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.10
 
-# Tránh chạy với root trong production
 WORKDIR /app
 
-# Cài dependencies trước (cache layer)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/requirements.txt .
+RUN pip install -r requirements.txt
 
-# Copy source code
-COPY . .
+COPY backend/ .
 
-# Port mặc định
-EXPOSE 8000
-
-# Entrypoint
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
