@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Lịch sử Dự đoán | DiabetesAI</title>
+    <meta name="description" content="Lịch sử và thống kê các lần dự đoán nguy cơ tiểu đường"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#g3)"/>
+                <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <defs><linearGradient id="g3" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/>
+                </linearGradient></defs>
+            </svg>
+            DiabetesAI
+        </a>
+        <div class="nav-links">
+            <a href="index.html">🩺 Dự đoán</a>
+            <a href="history.html" class="active">📋 Lịch sử</a>
+            <div id="auth-section" class="auth-buttons">
+                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'">Đăng ký</button>
+                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'">Đăng nhập</button>
+            </div>
+            <div id="user-section" class="user-profile hidden">
+                <span id="user-name">Người dùng</span>
+                <a href="#" id="admin-link" class="hidden">⚙️ Admin</a>
+                <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Đăng xuất</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container" style="padding: 40px 24px 60px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:32px;" class="animate-in">
+        <div>
+            <h1 style="font-size:1.6rem; font-weight:800;">📊 Dashboard Thống kê</h1>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Lịch sử dự đoán và phân tích tổng hợp</p>
+        </div>
+        <a href="index.html" class="btn btn-primary">🩺 Dự đoán mới</a>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="stats-grid animate-in delay-1" id="statsGrid">
+        <div class="stat-card"><div class="stat-label">Tổng số bản ghi</div><div class="stat-value accent" id="statTotal">–</div></div>
+        <div class="stat-card"><div class="stat-label">Nguy cơ cao</div><div class="stat-value high" id="statHigh">–</div></div>
+        <div class="stat-card"><div class="stat-label">Nguy cơ trung bình</div><div class="stat-value medium" id="statMedium">–</div></div>
+        <div class="stat-card"><div class="stat-label">Nguy cơ thấp</div><div class="stat-value low" id="statLow">–</div></div>
+        <div class="stat-card"><div class="stat-label">Tuổi trung bình</div><div class="stat-value accent" id="statAge">–</div></div>
+        <div class="stat-card"><div class="stat-label">BMI trung bình</div><div class="stat-value accent" id="statBmi">–</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:24px; margin-bottom:32px;" class="animate-in delay-2">
+        <div class="card" style="padding:24px;">
+            <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:20px;">🍩 Phân bố nguy cơ</h2>
+            <div style="position:relative; height:220px;">
+                <canvas id="riskChart"></canvas>
+            </div>
+            <div id="riskLegend" style="display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-size:0.78rem;"></div>
+        </div>
+        <div class="card" style="padding:24px;">
+            <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:20px;">📈 Glucose & BMI (20 gần nhất)</h2>
+            <div style="position:relative; height:220px;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card animate-in delay-3">
+        <div class="card-header" style="justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div class="card-icon">📋</div>
+                <h2>Danh sách bản ghi</h2>
+            </div>
+            <button class="btn btn-outline btn-sm" id="refreshBtn">↺ Làm mới</button>
+        </div>
+        <div class="card-body" style="padding-top:0;">
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="">Tất cả</button>
+                <button class="filter-btn" data-filter="Thấp">🟢 Thấp</button>
+                <button class="filter-btn" data-filter="Trung bình">🟡 Trung bình</button>
+                <button class="filter-btn" data-filter="Cao">🔴 Cao</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap">
+                <table id="recordsTable">
+                    <thead>
+                        <tr>
+                            <th>Bệnh nhân</th>
+                            <th>Nguy cơ</th>
+                            <th>Xác suất</th>
+                            <th>Glucose</th>
+                            <th>BMI</th>
+                            <th>Tuổi</th>
+                            <th>Thời gian</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        <tr><td colspan="8"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/history.js"></script>
+</body>
+</html>

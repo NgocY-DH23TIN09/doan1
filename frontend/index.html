@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dự đoán Nguy cơ Tiểu đường | DiabetesAI</title>
+    <meta name="description" content="Hệ thống dự đoán nguy cơ mắc bệnh tiểu đường sử dụng trí tuệ nhân tạo"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#g1)"/>
+                <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <defs><linearGradient id="g1" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/>
+                </linearGradient></defs>
+            </svg>
+            DiabetesAI
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="active">🩺 Dự đoán</a>
+            <a href="history.html">📋 Lịch sử</a>
+            <div id="auth-section" class="auth-buttons">
+                <button class="btn btn-sm btn-outline" onclick="openModal('registerModal')">Đăng ký</button>
+                <button class="btn btn-sm btn-primary" onclick="openModal('loginModal')">Đăng nhập</button>
+            </div>
+            <div id="user-section" class="user-profile hidden">
+                <span id="user-name">Người dùng</span>
+                <a href="#" id="admin-link" class="hidden">⚙️ Admin</a>
+                <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Đăng xuất</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero animate-in">
+    <div class="hero-badge">
+        <span class="dot"></span>
+        Mô hình ML · Random Forest · 80% Accuracy
+    </div>
+    <h1>Dự đoán Nguy cơ<br/>Tiểu đường</h1>
+    <p>Nhập các chỉ số sức khỏe để nhận đánh giá nguy cơ mắc bệnh tiểu đường từ AI</p>
+</section>
+
+<!-- Form -->
+<main class="container" style="padding-bottom: 60px;">
+    <div class="card animate-in delay-1">
+        <div class="card-header">
+            <div class="card-icon">📋</div>
+            <div>
+                <h2>Thông tin bệnh nhân</h2>
+                <p style="font-size:0.82rem; color: var(--text-muted); margin-top:2px;">Điền đầy đủ 8 chỉ số bên dưới</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="predictForm" novalidate>
+                <div class="form-grid" id="formGrid">
+                    <!-- dynamically injected by JS -->
+                </div>
+
+                <div style="margin-top:24px; padding:16px; background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-sm); color:var(--text-secondary); font-size:0.83rem; line-height:1.6;">
+                    💡 <strong>Lưu ý:</strong> Nhập <code>0</code> nếu không có dữ liệu cho Insulin hoặc Độ dày nếp da. Kết quả chỉ mang tính tham khảo, không thay thế chẩn đoán y tế.
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="resetBtn">↺ Nhập lại</button>
+                    <button type="button" class="btn btn-outline" id="sampleBtn">📊 Dữ liệu mẫu</button>
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <span id="submitText">Phân tích nguy cơ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Info cards -->
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:16px; margin-top:24px;">
+        <div class="card animate-in delay-2" style="padding:20px 22px;">
+            <div style="font-size:1.5rem; margin-bottom:8px;">🔬</div>
+            <div style="font-weight:600; margin-bottom:4px;">Pima Indians Dataset</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">Tập dữ liệu tiêu chuẩn với 768 mẫu, 8 đặc trưng lâm sàng</div>
+        </div>
+        <div class="card animate-in delay-2" style="padding:20px 22px;">
+            <div style="font-size:1.5rem; margin-bottom:8px;">🌲</div>
+            <div style="font-weight:600; margin-bottom:4px;">Random Forest</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">200 cây quyết định, tối ưu hóa với cross-validation 5-fold</div>
+        </div>
+        <div class="card animate-in delay-2" style="padding:20px 22px;">
+            <div style="font-size:1.5rem; margin-bottom:8px;">⚡</div>
+            <div style="font-weight:600; margin-bottom:4px;">Kết quả tức thì</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">Phân tích và lưu lịch sử dự đoán vào MongoDB</div>
+        </div>
+    </div>
+</main>
+
+<!-- Modals -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Đăng nhập</h3>
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" id="loginPhone" placeholder="0123456789" required>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="loginPass" placeholder="••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+        </form>
+    </div>
+</div>
+
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Đăng ký tài khoản</h3>
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        </div>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" id="regPhone" placeholder="10-11 chữ số" required>
+            </div>
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" id="regName" placeholder="Nguyễn Văn A" required>
+            </div>
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
+                <div class="form-group">
+                    <label>Tuổi</label>
+                    <input type="number" id="regAge" placeholder="25" required>
+                </div>
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    <select id="regGender">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="regPass" placeholder="Tối thiểu 6 ký tự" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;">Đăng ký</button>
+        </form>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/predict.js"></script>
+
+<script>
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = "none";
+        }
+    }
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        await Auth.login(document.getElementById('loginPhone').value, document.getElementById('loginPass').value);
+    };
+
+    document.getElementById('registerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        await Auth.register({
+            phone_number: document.getElementById('regPhone').value,
+            full_name: document.getElementById('regName').value,
+            age: parseInt(document.getElementById('regAge').value),
+            gender: document.getElementById('regGender').value,
+            password: document.getElementById('regPass').value
+        });
+        closeModal('registerModal');
+    };
+</script>
+</body>
+</html>
