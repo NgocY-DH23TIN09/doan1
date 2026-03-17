@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Request
 from models import UserCreate, UserInDB, UserResponse, UserRole
 from database import get_database
 from utils.auth_utils import get_password_hash, verify_password, create_access_token
 from datetime import datetime
 from pydantic import BaseModel
+from utils.limiter import limiter
 
 router = APIRouter()
 
@@ -41,7 +42,8 @@ async def register(user_in: UserCreate):
 
 
 @router.post("/login", summary="Đăng nhập")
-async def login(login_data: LoginRequest):
+@limiter.limit("5/minute")
+async def login(request: Request, login_data: LoginRequest):
     db = get_database()
     
     user = await db["users"].find_one({"phone_number": login_data.phone_number})

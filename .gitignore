@@ -1,0 +1,57 @@
+# ─── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# ─── Virtual Environments ─────────────────────────────────
+.venv/
+venv/
+ENV/
+env/
+.env.local
+
+# ─── Secrets / Credentials ────────────────────────────────
+.env
+!backend/.env.example
+
+# ─── ML Artifacts (retrain locally with ml/train.py) ──────
+backend/ml/model.pkl
+backend/ml/scaler.pkl
+
+# ─── Logs ─────────────────────────────────────────────────
+*.log
+uvicorn_debug_log.txt
+logs/
+
+# ─── IDEs & Editors ───────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ─── Testing ──────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# ─── Docker ───────────────────────────────────────────────
+# (docker-compose.yml được commit, nhưng bỏ qua local override)
+docker-compose.override.yml

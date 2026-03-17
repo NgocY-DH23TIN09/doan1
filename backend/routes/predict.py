@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from models import PatientInput, PredictionResult
 import joblib
 import numpy as np
 import os
 from google import genai
 from dotenv import load_dotenv
+from utils.limiter import limiter
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -54,7 +55,8 @@ RECOMMENDATIONS = {
 
 
 @router.post("/predict", response_model=PredictionResult, summary="Dự đoán nguy cơ tiểu đường")
-async def predict(patient: PatientInput):
+@limiter.limit("20/minute")
+async def predict(request: Request, patient: PatientInput):
     """
     Nhận các chỉ số sức khỏe của bệnh nhân và trả về nguy cơ mắc tiểu đường.
     """

@@ -1,4 +1,5 @@
 import os
+import warnings
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -9,7 +10,16 @@ import bcrypt
 load_dotenv()
 
 # Cấu hình bảo mật
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this-in-production")
+_DEFAULT_SECRET = "your-secret-key-change-this-in-production"
+SECRET_KEY = os.getenv("SECRET_KEY", _DEFAULT_SECRET)
+
+if SECRET_KEY == _DEFAULT_SECRET:
+    warnings.warn(
+        "[SECURITY] SECRET_KEY đang dùng giá trị mặc định! "
+        "Hãy đặt biến môi trường SECRET_KEY trong file .env trước khi deploy production.",
+        stacklevel=1
+    )
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 ngày
 
