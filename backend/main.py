@@ -54,23 +54,11 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# ── CORS – đọc từ .env, mặc định cho development ─────────
-_raw_origins = os.getenv("ALLOWED_ORIGINS", "")
-if _raw_origins.strip():
-    allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
-else:
-    # Development fallback: cho phép localhost
-    allowed_origins = [
-        "http://localhost",
-        "http://localhost:5500",
-        "http://127.0.0.1",
-        "http://127.0.0.1:5500",
-        "null",  # file:// origin
-    ]
-
+# ── CORS – cho phép mọi origin để tiện chạy bản local
+# NOTE: Trong môi trường production nên đặt lại cho chặt hơn.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
