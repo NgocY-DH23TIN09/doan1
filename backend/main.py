@@ -1,7 +1,11 @@
 
 import logging
+import os
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from database import connect_to_mongo, close_mongo_connection
@@ -12,12 +16,12 @@ from routes.users import router as users_router
 from database import get_database
 from utils.auth_utils import get_password_hash
 from models import UserRole
-import os
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from utils.limiter import limiter
 
 logger = logging.getLogger(__name__)
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 
 
 # ── Rate limiter ──────────────────────────────────────────
@@ -84,14 +88,23 @@ app.include_router(users_router, prefix="/api/users", tags=["Người dùng"])
 app.include_router(predict_router, prefix="/api", tags=["Dự đoán"])
 app.include_router(records_router, prefix="/api", tags=["Lịch sử"])
 
+if FRONTEND_DIR.exists():
+    app.mount("/web", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="web")
+
 
 @app.get("/", tags=["Health"])
 async def root():
     return {
         "message": "Diabetes Prediction API đang hoạt động 🚀",
         "docs": "/docs",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "web": "/web/"
     }
+
+
+@app.get("/app", include_in_schema=False)
+async def frontend_app_redirect():
+    return RedirectResponse(url="/web/", status_code=307)
 
 
 @app.get("/health", tags=["Health"])
