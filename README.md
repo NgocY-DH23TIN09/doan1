@@ -29,6 +29,20 @@ pip install -r backend/requirements.txt
 ```bash
 cp backend/.env.example backend/.env
 ```
+
+Sau đó mở `backend/.env` và điền giá trị thật cho:
+
+```env
+MONGODB_URL=mongodb+srv://your_db_user:your_db_password@cluster0.example.mongodb.net/diabetes_db?retryWrites=true&w=majority&appName=Cluster0
+GROQ_API_KEY=your-groq-api-key
+SECRET_KEY=your-secret-key
+```
+
+Nếu bạn dùng MongoDB local thay vì Atlas, có thể đổi `MONGODB_URL` thành:
+
+```env
+MONGODB_URL=mongodb://localhost:27017
+```
 ### 4. Chạy backend
 ```bash
 cd backend
