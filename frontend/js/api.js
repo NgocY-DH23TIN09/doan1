@@ -1,7 +1,9 @@
-const defaultApiHost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? window.location.hostname
-    : 'localhost';
-const API_BASE = window.API_BASE || `http://${defaultApiHost}:8000/api`;
+const LOCAL_FRONTEND_HOSTS = ['localhost', '127.0.0.1'];
+const RENDER_API_BASE = 'https://doan1-ymhe.onrender.com/api';
+const isLocalFrontend = LOCAL_FRONTEND_HOSTS.includes(window.location.hostname);
+const API_BASE = window.API_BASE || (isLocalFrontend
+    ? `http://${window.location.hostname}:8000/api`
+    : RENDER_API_BASE);
 
 async function apiFetch(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;
@@ -42,10 +44,10 @@ async function apiFetch(endpoint, options = {}) {
             throw new Error('Kết nối tới server bị timeout — hãy đảm bảo MongoDB đang chạy!');
         }
         if (err instanceof TypeError && window.location.protocol === 'file:') {
-            throw new Error('Không thể kết nối tới backend. Nếu bạn mở frontend trực tiếp từ file, backend phải cho phép origin null và đang chạy tại http://localhost:8000.');
+            throw new Error(`Không thể kết nối tới backend hiện tại: ${API_BASE}. Nếu bạn mở frontend trực tiếp từ file, hãy kiểm tra backend đã cho phép origin tương ứng.`);
         }
         if (err instanceof TypeError) {
-            throw new Error('Không thể kết nối tới backend tại http://localhost:8000. Hãy kiểm tra backend đã chạy chưa.');
+            throw new Error(`Không thể kết nối tới backend tại ${API_BASE}. Hãy kiểm tra backend đã chạy và CORS đã được cấu hình đúng.`);
         }
         throw err;
     }
