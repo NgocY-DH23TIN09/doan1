@@ -127,7 +127,8 @@ POST /api/predict
 - Dataset: Dataset.csv
 - Output: Prediction + Probability
 - Accuracy: ~0.79 - 0.85 tùy pipeline/model đang dùng
-
+## LINK CHẠY WEB ỨNG DỤNG XÂY DỰNG MÔ HÌNH DỰ ĐOÁN NGUY CƠ MẮC BỆNH TIỂU ĐƯỜNG 
+LINK: https://doan1-ymhe.onrender.com/web/
 ## 📌 Tác giả
 
 NgocY
