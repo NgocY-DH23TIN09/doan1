@@ -1,9 +1,10 @@
 const LOCAL_FRONTEND_HOSTS = ['localhost', '127.0.0.1'];
 const RENDER_API_BASE = 'https://doan1-ymhe.onrender.com/api';
 const isLocalFrontend = LOCAL_FRONTEND_HOSTS.includes(window.location.hostname);
+const isFileFrontend = window.location.protocol === 'file:';
 const API_BASE = window.API_BASE || (isLocalFrontend
     ? `http://${window.location.hostname}:8000/api`
-    : RENDER_API_BASE);
+    : (isFileFrontend ? RENDER_API_BASE : `${window.location.origin}/api`));
 
 async function apiFetch(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;

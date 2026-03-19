@@ -50,6 +50,12 @@ cd backend
 uvicorn main:app --reload
 ```
 
+Khi backend chạy, bạn có thể mở trực tiếp HTML frontend đã được mount sẵn tại:
+
+```text
+http://127.0.0.1:8000/web/
+```
+
 ### 5. Chạy Streamlit frontend
 
 Frontend Streamlit chính nằm tại [frontend/app.py](frontend/app.py).
@@ -87,9 +93,18 @@ Repo hiện đã được cấu hình để frontend có thể dùng backend Ren
 https://doan1-ymhe.onrender.com
 ```
 
+Frontend HTML chạy chung với backend tại:
+
+```text
+https://doan1-ymhe.onrender.com/web/
+```
+
 Trong môi trường local:
 - HTML frontend ưu tiên backend local nếu chạy trên `localhost`
 - Streamlit frontend gọi backend Render theo mặc định và có fallback về model local
+
+Trong môi trường deploy:
+- HTML frontend ưu tiên gọi API cùng origin, ví dụ `https://doan1-ymhe.onrender.com/api`
 
 ## 🤖 API Example
 ```http

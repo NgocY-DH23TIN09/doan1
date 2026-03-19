@@ -92,8 +92,15 @@ if FRONTEND_DIR.exists():
     app.mount("/web", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="web")
 
 
-@app.get("/", tags=["Health"])
+@app.get("/", include_in_schema=False)
 async def root():
+    if FRONTEND_DIR.exists():
+        return RedirectResponse(url="/web/", status_code=307)
+    return RedirectResponse(url="/docs", status_code=307)
+
+
+@app.get("/api-info", tags=["Health"])
+async def api_info():
     return {
         "message": "Diabetes Prediction API đang hoạt động 🚀",
         "docs": "/docs",
