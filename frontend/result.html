@@ -21,7 +21,12 @@
             </svg>
             DiabetesAI
         </a>
-        <div class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="navLinks" onclick="toggleNav(this)">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="index.html">🩺 Dự đoán</a>
             <a href="history.html">📋 Lịch sử</a>
             <div id="auth-section" class="auth-buttons">
@@ -37,11 +42,11 @@
     </div>
 </nav>
 
-<main class="container" style="padding: 40px 24px 60px;">
+<main class="container main-content result-main">
     <!-- Header -->
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:32px;" class="animate-in">
+    <div class="result-header animate-in">
         <a href="index.html" class="btn btn-outline btn-sm">← Dự đoán mới</a>
-        <h1 style="font-size:1.3rem; font-weight:700;">Kết quả phân tích</h1>
+        <h1 class="result-title">Kết quả phân tích</h1>
     </div>
 
     <div id="resultContent" class="result-grid">
@@ -49,18 +54,18 @@
     </div>
 
     <!-- Recommendation -->
-    <div id="recCard" class="card animate-in delay-2" style="margin-top:24px; padding:24px 28px; display:none;">
-        <div style="display:flex; align-items:flex-start; gap:14px;">
-            <div style="font-size:1.6rem;">💊</div>
+    <div id="recCard" class="card animate-in delay-2 recommendation-card" style="display:none;">
+        <div class="recommendation-layout">
+            <div class="recommendation-icon">💊</div>
             <div>
-                <div style="font-weight:600; margin-bottom:6px;">Khuyến nghị</div>
-                <p id="recText" style="color:var(--text-secondary); font-size:0.9rem; line-height:1.7;"></p>
+                <div class="recommendation-title">Khuyến nghị</div>
+                <p id="recText" class="recommendation-text"></p>
             </div>
         </div>
     </div>
 
     <!-- Save + feature chart -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;" class="features-section">
+    <div class="features-section">
         <div class="card animate-in delay-3" id="featureCard" style="display:none;">
             <div class="card-header">
                 <div class="card-icon">📊</div>
@@ -82,16 +87,17 @@
     </div>
 
     <!-- Save button -->
-    <div style="text-align:center; margin-top:32px;" class="animate-in delay-3">
+    <div class="save-actions animate-in delay-3">
         <button class="btn btn-primary btn-lg" id="saveBtn" style="min-width:220px;">
             💾 Lưu kết quả
         </button>
-        <p style="color:var(--text-muted); font-size:0.78rem; margin-top:8px;">Kết quả sẽ được lưu vào lịch sử</p>
+        <p class="save-hint">Kết quả sẽ được lưu vào lịch sử</p>
     </div>
 </main>
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/result.js"></script>
 </body>
 </html>

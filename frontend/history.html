@@ -21,7 +21,12 @@
             </svg>
             DiabetesAI
         </a>
-        <div class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="navLinks" onclick="toggleNav(this)">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="index.html">🩺 Dự đoán</a>
             <a href="history.html" class="active">📋 Lịch sử</a>
             <div id="auth-section" class="auth-buttons">
@@ -37,11 +42,11 @@
     </div>
 </nav>
 
-<main class="container" style="padding: 40px 24px 60px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:32px;" class="animate-in">
+<main class="container main-content history-main">
+    <div class="dashboard-header animate-in">
         <div>
-            <h1 style="font-size:1.6rem; font-weight:800;">📊 Dashboard Thống kê</h1>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Lịch sử dự đoán và phân tích tổng hợp</p>
+            <h1 class="page-title">📊 Dashboard Thống kê</h1>
+            <p class="section-subtitle">Lịch sử dự đoán và phân tích tổng hợp</p>
         </div>
         <a href="index.html" class="btn btn-primary">🩺 Dự đoán mới</a>
     </div>
@@ -57,17 +62,17 @@
     </div>
 
     <!-- Charts -->
-    <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:24px; margin-bottom:32px;" class="animate-in delay-2">
-        <div class="card" style="padding:24px;">
-            <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:20px;">🍩 Phân bố nguy cơ</h2>
-            <div style="position:relative; height:220px;">
+    <div class="charts-grid animate-in delay-2">
+        <div class="card chart-card">
+            <h2 class="chart-title">🍩 Phân bố nguy cơ</h2>
+            <div class="chart-canvas-wrap">
                 <canvas id="riskChart"></canvas>
             </div>
-            <div id="riskLegend" style="display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-size:0.78rem;"></div>
+            <div id="riskLegend" class="risk-legend"></div>
         </div>
-        <div class="card" style="padding:24px;">
-            <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:20px;">📈 Glucose & BMI (20 gần nhất)</h2>
-            <div style="position:relative; height:220px;">
+        <div class="card chart-card">
+            <h2 class="chart-title">📈 Glucose & BMI (20 gần nhất)</h2>
+            <div class="chart-canvas-wrap">
                 <canvas id="trendChart"></canvas>
             </div>
         </div>
@@ -120,6 +125,7 @@
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/history.js"></script>
 </body>
 </html>

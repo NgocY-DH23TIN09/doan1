@@ -138,14 +138,14 @@ async function loadRecords() {
             const pct   = r.prediction?.risk_percentage ?? '–';
             return `
                 <tr>
-                    <td style="font-weight:500">${r.patient_name || 'Ẩn danh'}</td>
-                    <td><span class="badge ${getRiskBadgeClass(level)}">${level}</span></td>
-                    <td style="font-weight:600">${pct}%</td>
-                    <td>${r.input_data?.glucose ?? '–'} <span style="color:var(--text-muted); font-size:0.75rem;">mg/dL</span></td>
-                    <td>${r.input_data?.bmi ?? '–'}</td>
-                    <td>${r.input_data?.age ?? '–'}</td>
-                    <td style="color:var(--text-muted)">${formatDate(r.created_at)}</td>
-                    <td>
+                    <td data-label="Bệnh nhân" style="font-weight:500">${r.patient_name || 'Ẩn danh'}</td>
+                    <td data-label="Nguy cơ"><span class="badge ${getRiskBadgeClass(level)}">${level}</span></td>
+                    <td data-label="Xác suất" style="font-weight:600">${pct}%</td>
+                    <td data-label="Glucose">${r.input_data?.glucose ?? '–'} <span style="color:var(--text-muted); font-size:0.75rem;">mg/dL</span></td>
+                    <td data-label="BMI">${r.input_data?.bmi ?? '–'}</td>
+                    <td data-label="Tuổi">${r.input_data?.age ?? '–'}</td>
+                    <td data-label="Thời gian" style="color:var(--text-muted)">${formatDate(r.created_at)}</td>
+                    <td data-label="Hành động">
                         <button class="btn btn-danger btn-sm" onclick="deleteRecord('${r.id}')">🗑 Xóa</button>
                     </td>
                 </tr>

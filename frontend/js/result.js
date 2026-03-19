@@ -50,30 +50,24 @@ function renderResult() {
         </div>
 
         <!-- Detail info -->
-        <div class="card animate-in delay-1" style="padding:28px;">
+        <div class="card animate-in delay-1 result-summary-card">
             <h2 style="font-size:1rem; font-weight:600; margin-bottom:20px;">📈 Mức độ nguy cơ theo thang điểm</h2>
-            <div style="position:relative; height:12px; background:rgba(255,255,255,0.06); border-radius:100px; overflow:hidden; margin-bottom:10px;">
-                <div style="
-                    position:absolute; top:0; left:0; height:100%;
-                    width:${risk_percentage}%;
-                    background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
-                    border-radius:100px;
-                    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
-                "></div>
+            <div class="risk-meter">
+                <div class="risk-meter-fill" style="width:${risk_percentage}%;"></div>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:24px;">
+            <div class="risk-scale">
                 <span>🟢 0–30% Thấp</span>
                 <span>🟡 30–60% Trung bình</span>
                 <span>🔴 60–100% Cao</span>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div style="background:var(--glass); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:14px 16px;">
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">XÁC SUẤT</div>
-                    <div style="font-size:1.4rem; font-weight:700; color:${color}">${risk_percentage}%</div>
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-stat-label">XÁC SUẤT</div>
+                    <div class="summary-stat-value" style="color:${color}">${risk_percentage}%</div>
                 </div>
-                <div style="background:var(--glass); border:1px solid var(--glass-border); border-radius:var(--radius-sm); padding:14px 16px;">
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">MỨC ĐỘ</div>
-                    <div style="font-size:1.4rem; font-weight:700; color:${color}">${risk_level}</div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">MỨC ĐỘ</div>
+                    <div class="summary-stat-value" style="color:${color}">${risk_level}</div>
                 </div>
             </div>
         </div>
@@ -113,12 +107,12 @@ function renderResult() {
     if (inputData) {
         document.getElementById('inputCard').style.display = '';
         document.getElementById('inputTable').innerHTML = `
-            <table style="width:100%; min-width:0;">
+            <table class="input-summary-table">
                 <tbody>
                     ${Object.entries(inputData).map(([k, v]) => `
                         <tr>
-                            <td style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.04); padding:9px 0; font-size:0.83rem;">${LABELS_VI[k] || k}</td>
-                            <td style="font-weight:600; border-bottom:1px solid rgba(255,255,255,0.04); padding:9px 0; font-size:0.88rem; text-align:right;">${v} <span style="color:var(--text-muted); font-weight:400; font-size:0.78rem;">${UNITS_VI[k] || ''}</span></td>
+                            <td style="color:var(--text-muted); padding:9px 0; font-size:0.83rem;">${LABELS_VI[k] || k}</td>
+                            <td style="font-weight:600; padding:9px 0; font-size:0.88rem; text-align:right;">${v} <span style="color:var(--text-muted); font-weight:400; font-size:0.78rem;">${UNITS_VI[k] || ''}</span></td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -168,26 +162,13 @@ function showSaveModal() {
 
     const modal = document.createElement('div');
     modal.id = 'saveModal';
-    modal.style.cssText = `
-        position:fixed; inset:0; background:rgba(10,10,26,0.85);
-        backdrop-filter:blur(12px); display:flex; align-items:center;
-        justify-content:center; z-index:300; animation:fadeInUp 0.3s ease;
-    `;
+    modal.className = 'save-modal';
     modal.innerHTML = `
-        <div style="
-            background:#111128; border:1px solid rgba(255,255,255,0.12);
-            border-radius:16px; padding:32px; width:min(400px,90vw);
-            box-shadow:0 25px 60px rgba(0,0,0,0.6);
-        ">
-            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">💾 Lưu kết quả</h3>
-            <p style="color:var(--text-muted); font-size:0.83rem; margin-bottom:20px;">Nhập tên bệnh nhân (tuỳ chọn)</p>
-            <input id="modalNameInput" type="text" placeholder="Ví dụ: Nguyễn Văn A" style="
-                width:100%; background:rgba(255,255,255,0.06);
-                border:1px solid rgba(255,255,255,0.12); border-radius:8px;
-                padding:12px 16px; color:#f1f5f9; font-family:Inter,sans-serif;
-                font-size:0.95rem; outline:none; margin-bottom:20px;
-            "/>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <div class="save-modal-card">
+            <h3 class="save-modal-title">💾 Lưu kết quả</h3>
+            <p class="save-modal-text">Nhập tên bệnh nhân (tuỳ chọn)</p>
+            <input id="modalNameInput" class="save-modal-input" type="text" placeholder="Ví dụ: Nguyễn Văn A"/>
+            <div class="save-modal-actions">
                 <button id="modalCancelBtn" class="btn btn-outline btn-sm">Huỷ</button>
                 <button id="modalSaveBtn" class="btn btn-primary" style="min-width:110px;">
                     <span id="modalSaveText">Lưu</span>

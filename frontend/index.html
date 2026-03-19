@@ -22,7 +22,12 @@
             </svg>
             DiabetesAI
         </a>
-        <div class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="navLinks" onclick="toggleNav(this)">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="index.html" class="active">🩺 Dự đoán</a>
             <a href="history.html">📋 Lịch sử</a>
             <div id="auth-section" class="auth-buttons">
@@ -49,13 +54,13 @@
 </section>
 
 <!-- Form -->
-<main class="container" style="padding-bottom: 60px;">
+<main class="container main-content main-content-home">
     <div class="card animate-in delay-1">
         <div class="card-header">
             <div class="card-icon">📋</div>
             <div>
                 <h2>Thông tin bệnh nhân</h2>
-                <p style="font-size:0.82rem; color: var(--text-muted); margin-top:2px;">Điền đầy đủ 8 chỉ số bên dưới</p>
+                <p class="section-subtitle">Điền đầy đủ 8 chỉ số bên dưới</p>
             </div>
         </div>
         <div class="card-body">
@@ -64,7 +69,7 @@
                     <!-- dynamically injected by JS -->
                 </div>
 
-                <div style="margin-top:24px; padding:16px; background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.2); border-radius:var(--radius-sm); color:var(--text-secondary); font-size:0.83rem; line-height:1.6;">
+                <div class="info-note">
                     💡 <strong>Lưu ý:</strong> Nhập <code>0</code> nếu không có dữ liệu cho Insulin hoặc Độ dày nếp da. Kết quả chỉ mang tính tham khảo, không thay thế chẩn đoán y tế.
                 </div>
 
@@ -80,21 +85,21 @@
     </div>
 
     <!-- Info cards -->
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:16px; margin-top:24px;">
-        <div class="card animate-in delay-2" style="padding:20px 22px;">
-            <div style="font-size:1.5rem; margin-bottom:8px;">🔬</div>
-            <div style="font-weight:600; margin-bottom:4px;">Pima Indians Dataset</div>
-            <div style="font-size:0.82rem; color:var(--text-muted);">Tập dữ liệu tiêu chuẩn với 768 mẫu, 8 đặc trưng lâm sàng</div>
+    <div class="info-grid">
+        <div class="card animate-in delay-2 info-card">
+            <div class="info-card-icon">🔬</div>
+            <div class="info-card-title">Pima Indians Dataset</div>
+            <div class="info-card-text">Tập dữ liệu tiêu chuẩn với 768 mẫu, 8 đặc trưng lâm sàng</div>
         </div>
-        <div class="card animate-in delay-2" style="padding:20px 22px;">
-            <div style="font-size:1.5rem; margin-bottom:8px;">🌲</div>
-            <div style="font-weight:600; margin-bottom:4px;">Random Forest</div>
-            <div style="font-size:0.82rem; color:var(--text-muted);">200 cây quyết định, tối ưu hóa với cross-validation 5-fold</div>
+        <div class="card animate-in delay-2 info-card">
+            <div class="info-card-icon">🌲</div>
+            <div class="info-card-title">Random Forest</div>
+            <div class="info-card-text">200 cây quyết định, tối ưu hóa với cross-validation 5-fold</div>
         </div>
-        <div class="card animate-in delay-2" style="padding:20px 22px;">
-            <div style="font-size:1.5rem; margin-bottom:8px;">⚡</div>
-            <div style="font-weight:600; margin-bottom:4px;">Kết quả tức thì</div>
-            <div style="font-size:0.82rem; color:var(--text-muted);">Phân tích và lưu lịch sử dự đoán vào MongoDB</div>
+        <div class="card animate-in delay-2 info-card">
+            <div class="info-card-icon">⚡</div>
+            <div class="info-card-title">Kết quả tức thì</div>
+            <div class="info-card-text">Phân tích và lưu lịch sử dự đoán vào MongoDB</div>
         </div>
     </div>
 </main>
@@ -135,7 +140,7 @@
                 <label>Họ và tên</label>
                 <input type="text" id="regName" placeholder="Nguyễn Văn A" required>
             </div>
-            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
+            <div class="form-grid auth-form-grid">
                 <div class="form-group">
                     <label>Tuổi</label>
                     <input type="number" id="regAge" placeholder="25" required>
@@ -160,6 +165,7 @@
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/predict.js"></script>
 
 <script>
