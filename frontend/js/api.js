@@ -1,4 +1,7 @@
-const API_BASE = window.API_BASE || 'http://localhost:8000/api';
+const defaultApiHost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? window.location.hostname
+    : 'localhost';
+const API_BASE = window.API_BASE || `http://${defaultApiHost}:8000/api`;
 
 async function apiFetch(endpoint, options = {}) {
     const url = `${API_BASE}${endpoint}`;
@@ -20,14 +23,29 @@ async function apiFetch(endpoint, options = {}) {
         const response = await fetch(url, defaultOptions);
         clearTimeout(timeout);
         if (!response.ok) {
-            const error = await response.json().catch(() => ({ detail: 'Lỗi không xác định' }));
-            throw new Error(error.detail || `HTTP Error: ${response.status}`);
+            const errorBody = await response.json().catch(() => ({ detail: 'Lỗi không xác định' }));
+            const error = new Error(errorBody.detail || `HTTP Error: ${response.status}`);
+            error.status = response.status;
+
+            if (response.status === 401) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user');
+                window.dispatchEvent(new CustomEvent('auth:expired'));
+            }
+
+            throw error;
         }
         return response.json();
     } catch (err) {
         clearTimeout(timeout);
         if (err.name === 'AbortError') {
             throw new Error('Kết nối tới server bị timeout — hãy đảm bảo MongoDB đang chạy!');
+        }
+        if (err instanceof TypeError && window.location.protocol === 'file:') {
+            throw new Error('Không thể kết nối tới backend. Nếu bạn mở frontend trực tiếp từ file, backend phải cho phép origin null và đang chạy tại http://localhost:8000.');
+        }
+        if (err instanceof TypeError) {
+            throw new Error('Không thể kết nối tới backend tại http://localhost:8000. Hãy kiểm tra backend đã chạy chưa.');
         }
         throw err;
     }

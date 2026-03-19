@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 
 
@@ -32,18 +32,16 @@ class UserResponse(UserBase):
     role: UserRole
     created_at: datetime
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class UserInDB(UserBase):
     id: Optional[str] = None
     role: UserRole = UserRole.USER
     password_hash: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PatientInput(BaseModel):
@@ -56,8 +54,8 @@ class PatientInput(BaseModel):
     diabetes_pedigree: float = Field(..., ge=0, le=3, description="Hệ số di truyền tiểu đường")
     age: float = Field(..., ge=1, le=120, description="Tuổi")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "pregnancies": 2,
                 "glucose": 120,
@@ -69,6 +67,7 @@ class PatientInput(BaseModel):
                 "age": 35
             }
         }
+    )
 
 
 class PredictionResult(BaseModel):
@@ -84,14 +83,13 @@ class PredictionRecord(BaseModel):
     patient_name: Optional[str] = "Ẩn danh"
     input_data: PatientInput
     prediction: PredictionResult
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class PredictionRecordDB(PredictionRecord):
     id: Optional[str] = None
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class StatsResponse(BaseModel):

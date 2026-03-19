@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from models import UserResponse, UserUpdate, UserRole
-from database import get_database
+from database import require_database
 from bson import ObjectId
 from utils.auth_utils import decode_access_token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -19,7 +19,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         )
     
     user_id = payload.get("sub")
-    db = get_database()
+    db = require_database()
     user = await db["users"].find_one({"_id": ObjectId(user_id)})
     if not user:
         raise HTTPException(status_code=404, detail="Người dùng không tồn tại")
@@ -45,7 +45,7 @@ async def update_user_role(
     role_update: UserUpdate, 
     admin: dict = Depends(get_admin_user)
 ):
-    db = get_database()
+    db = require_database()
     try:
         obj_id = ObjectId(user_id)
     except:
@@ -66,7 +66,7 @@ async def update_user_role(
 
 @router.get("/", summary="Danh sách người dùng (Admin only)")
 async def list_users(admin: dict = Depends(get_admin_user)):
-    db = get_database()
+    db = require_database()
     cursor = db["users"].find()
     users = []
     async for user in cursor:

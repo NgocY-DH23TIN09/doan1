@@ -1,6 +1,7 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+from fastapi import HTTPException, status
 
 load_dotenv()
 
@@ -26,4 +27,13 @@ async def close_mongo_connection():
 
 
 def get_database():
+    return db
+
+
+def require_database():
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Cơ sở dữ liệu chưa sẵn sàng. Hãy kiểm tra kết nối MongoDB."
+        )
     return db

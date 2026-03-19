@@ -61,7 +61,13 @@ async def predict(request: Request, patient: PatientInput):
     Nhận các chỉ số sức khỏe của bệnh nhân và trả về nguy cơ mắc tiểu đường.
     """
     if _model is None or _scaler is None:
-        raise HTTPException(status_code=503, detail="Model chưa được tải. Hãy train model trước.")
+        try:
+            load_model()
+        except FileNotFoundError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="Model chưa được tải. Hãy train model trước."
+            ) from exc
 
     # Tạo feature vector
     features = np.array([[

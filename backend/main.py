@@ -1,8 +1,9 @@
 
+import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import UTC, datetime
 from database import connect_to_mongo, close_mongo_connection
 from routes.predict import router as predict_router, load_model
 from routes.records import router as records_router
@@ -15,6 +16,9 @@ import os
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from utils.limiter import limiter
+
+logger = logging.getLogger(__name__)
+
 
 # ── Rate limiter ──────────────────────────────────────────
 
@@ -35,13 +39,15 @@ async def lifespan(app: FastAPI):
             "gender": "Nam",
             "password_hash": get_password_hash("admin123"),
             "role": UserRole.ADMIN,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.now(UTC)
         }
         await db["users"].insert_one(admin_user)
         print("[INIT] Default Admin created: 0123456789 / admin123")
 
     yield
     await close_mongo_connection()
+
+
 
 
 app = FastAPI(
@@ -55,13 +61,20 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# ── CORS – cho phép mọi origin để tiện chạy bản local
-# NOTE: Trong môi trường production nên đặt lại cho chặt hơn.
+# ── CORS – Whitelist specific origins (security improved)
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:5000,http://localhost:5500,http://127.0.0.1:3000,http://127.0.0.1:5000,http://127.0.0.1:5500,null"
+    ).split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -83,4 +96,5 @@ async def root():
 
 @app.get("/health", tags=["Health"])
 async def health_check():
+    """Health check endpoint"""
     return {"status": "ok"}

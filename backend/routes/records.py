@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 from models import PredictionRecord, PredictionRecordDB, UserRole
-from database import get_database
+from database import require_database
 from bson import ObjectId
 from datetime import datetime
 from typing import Optional
@@ -23,7 +23,7 @@ def record_helper(record) -> dict:
 
 @router.post("/records", summary="Lưu kết quả dự đoán")
 async def save_record(record: PredictionRecord, current_user: dict = Depends(get_current_user)):
-    db = get_database()
+    db = require_database()
     record_dict = record.model_dump()
     record_dict["user_id"] = str(current_user["_id"])
     if not record.patient_name or record.patient_name == "Ẩn danh":
@@ -41,7 +41,7 @@ async def get_records(
     risk_level: Optional[str] = Query(None, description="Lọc theo: Thấp, Trung bình, Cao"),
     current_user: dict = Depends(get_current_user)
 ):
-    db = get_database()
+    db = require_database()
     query = {}
     
     # Phân quyền: User chỉ xem của mình, Admin xem hết
@@ -69,7 +69,7 @@ async def get_records(
 
 @router.get("/records/{record_id}", summary="Xem chi tiết bản ghi")
 async def get_record(record_id: str, current_user: dict = Depends(get_current_user)):
-    db = get_database()
+    db = require_database()
     try:
         obj_id = ObjectId(record_id)
     except Exception:
@@ -88,7 +88,7 @@ async def get_record(record_id: str, current_user: dict = Depends(get_current_us
 
 @router.delete("/records/{record_id}", summary="Xóa bản ghi")
 async def delete_record(record_id: str, current_user: dict = Depends(get_current_user)):
-    db = get_database()
+    db = require_database()
     try:
         obj_id = ObjectId(record_id)
     except Exception:
@@ -107,7 +107,7 @@ async def delete_record(record_id: str, current_user: dict = Depends(get_current
 
 @router.get("/stats", summary="Thống kê tổng hợp")
 async def get_stats(current_user: dict = Depends(get_current_user)):
-    db = get_database()
+    db = require_database()
     
     query = {}
     if current_user.get("role") != UserRole.ADMIN:

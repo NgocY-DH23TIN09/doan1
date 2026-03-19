@@ -36,7 +36,18 @@ uvicorn main:app --reload
 ```
 ### 5. Mở frontend
 
-Mở file: `frontend/index.html`
+Không nên mở `frontend/index.html` trực tiếp bằng `file:///` vì trình duyệt sẽ chặn request sang FastAPI do CORS.
+
+Hãy chạy frontend bằng một HTTP server cục bộ, ví dụ:
+
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Sau đó mở `http://localhost:5500`.
+
+Nếu dùng VS Code Live Server, cổng mặc định `5500` đã được backend cho phép sẵn.
 
 ## 🤖 API Example
 ```http

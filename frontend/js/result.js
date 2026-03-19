@@ -230,7 +230,7 @@ async function doSave(modal, patientName) {
     } catch (err) {
         saveBtn.disabled = false;
         saveText.textContent = 'Lưu';
-        if (err.message.includes('401')) {
+        if (err.status === 401) {
             showToast('Phiên làm việc hết hạn, vui lòng đăng nhập lại', 'error');
             setTimeout(() => window.location.href = 'index.html?action=login', 1500);
         } else {

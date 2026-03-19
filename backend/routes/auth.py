@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from models import UserCreate, UserInDB, UserResponse, UserRole
-from database import get_database
+from database import require_database
 from utils.auth_utils import get_password_hash, verify_password, create_access_token
-from datetime import datetime
+from datetime import UTC, datetime
 from pydantic import BaseModel
 from utils.limiter import limiter
 
@@ -15,8 +15,9 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/register", response_model=UserResponse, summary="Đăng ký tài khoản mới")
-async def register(user_in: UserCreate):
-    db = get_database()
+@limiter.limit("3/hour")
+async def register(request: Request, user_in: UserCreate):
+    db = require_database()
     
     # Kiểm tra số điện thoại đã tồn tại chưa
     existing_user = await db["users"].find_one({"phone_number": user_in.phone_number})
@@ -33,7 +34,7 @@ async def register(user_in: UserCreate):
     user_dict = user_in.model_dump(exclude={"password"})
     user_dict["password_hash"] = hashed_password
     user_dict["role"] = UserRole.USER
-    user_dict["created_at"] = datetime.utcnow()
+    user_dict["created_at"] = datetime.now(UTC)
     
     result = await db["users"].insert_one(user_dict)
     user_dict["id"] = str(result.inserted_id)
@@ -44,7 +45,7 @@ async def register(user_in: UserCreate):
 @router.post("/login", summary="Đăng nhập")
 @limiter.limit("5/minute")
 async def login(request: Request, login_data: LoginRequest):
-    db = get_database()
+    db = require_database()
     
     user = await db["users"].find_one({"phone_number": login_data.phone_number})
     if not user or not verify_password(login_data.password, user["password_hash"]):

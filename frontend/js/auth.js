@@ -53,6 +53,16 @@ const Auth = {
     }
 };
 
+window.addEventListener('auth:expired', () => {
+    showToast('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại', 'error');
+
+    if (!window.location.pathname.endsWith('index.html')) {
+        setTimeout(() => {
+            window.location.href = 'index.html?action=login';
+        }, 1200);
+    }
+});
+
 // Khởi tạo UI dựa trên trạng thái đăng nhập
 document.addEventListener('DOMContentLoaded', () => {
     const user = Auth.getUser();
