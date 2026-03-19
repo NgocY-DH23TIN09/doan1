@@ -9,7 +9,7 @@ Dự án sử dụng Machine Learning để dự đoán dựa trên dữ liệu 
 - FastAPI (Backend)
 - MongoDB (Database)
 - Machine Learning (Scikit-learn)
-- HTML/CSS/JS (Frontend)
+- Streamlit + HTML/CSS/JS (Frontend)
 
 ## 📸 Demo
 
@@ -24,6 +24,7 @@ cd doan1
 ### 2. Cài thư viện
 ```bash
 pip install -r backend/requirements.txt
+pip install -r requirements-streamlit.txt
 ```
 ### 3. Tạo file .env
 ```bash
@@ -48,7 +49,22 @@ MONGODB_URL=mongodb://localhost:27017
 cd backend
 uvicorn main:app --reload
 ```
-### 5. Mở frontend
+
+### 5. Chạy Streamlit frontend
+
+Frontend Streamlit chính nằm tại [frontend/app.py](frontend/app.py).
+
+```bash
+python -m streamlit run frontend/app.py
+```
+
+Bạn vẫn có thể chạy qua [app.py](app.py) ở root, đây là launcher tương thích:
+
+```bash
+python -m streamlit run app.py
+```
+
+### 6. Mở HTML frontend
 
 Không nên mở `frontend/index.html` trực tiếp bằng `file:///` vì trình duyệt sẽ chặn request sang FastAPI do CORS.
 
@@ -63,12 +79,30 @@ Sau đó mở `http://localhost:5500`.
 
 Nếu dùng VS Code Live Server, cổng mặc định `5500` đã được backend cho phép sẵn.
 
+### 7. Backend online
+
+Repo hiện đã được cấu hình để frontend có thể dùng backend Render:
+
+```text
+https://doan1-ymhe.onrender.com
+```
+
+Trong môi trường local:
+- HTML frontend ưu tiên backend local nếu chạy trên `localhost`
+- Streamlit frontend gọi backend Render theo mặc định và có fallback về model local
+
 ## 🤖 API Example
 ```http
-POST /predict
+POST /api/predict
 {
-  "feature1": 1,
-  "feature2": 0.5
+  "pregnancies": 1,
+  "glucose": 100,
+  "blood_pressure": 70,
+  "skin_thickness": 20,
+  "insulin": 80,
+  "bmi": 25,
+  "diabetes_pedigree": 0.5,
+  "age": 30
 }
 ```
 
@@ -77,7 +111,7 @@ POST /predict
 - Model: Random Forest
 - Dataset: Dataset.csv
 - Output: Prediction + Probability
-- Accuracy: 0.7922
+- Accuracy: ~0.79 - 0.85 tùy pipeline/model đang dùng
 
 ## 📌 Tác giả
 

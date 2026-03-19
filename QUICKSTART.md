@@ -5,12 +5,14 @@
 ### 🚀 Cách 1: Streamlit (Dễ nhất - Khuyến nghị)
 
 ```bash
-python -m streamlit run app.py
+python -m streamlit run frontend/app.py
 ```
 
 ✅ Không cần setup  
 ✅ Mở browser tự động  
 ✅ Chạy ngay: http://localhost:8501
+
+`app.py` ở root vẫn chạy được nhưng chỉ là launcher trỏ sang `frontend/app.py`.
 
 ---
 
@@ -44,8 +46,8 @@ http://localhost:5000/index.html
 - **App**: Dự đoán nguy cơ tiểu đường
 - **Model**: Random Forest (79% accuracy)
 - **Dataset**: Pima Indians (768 mẫu)
-- **Backend**: FastAPI hoặc Flask
-- **Frontend**: Streamlit hoặc HTML/JS
+- **Backend**: FastAPI
+- **Frontend**: Streamlit và HTML/JS
 - **Database**: MongoDB
 
 ---
@@ -73,7 +75,7 @@ python -m py_compile app.py
 pip install -r requirements-streamlit.txt
 
 # Chạy
-python -m streamlit run app.py
+python -m streamlit run frontend/app.py
 ```
 
 ---
@@ -81,7 +83,7 @@ python -m streamlit run app.py
 ## 📂 Cấu trúc
 
 ```
-├── app.py                    ✅ Streamlit app
+├── app.py                    ✅ Launcher tới frontend/app.py
 ├── requirements-streamlit.txt
 ├── QUICKSTART.md            ✅ (file này)
 ├── backend/
@@ -91,6 +93,7 @@ python -m streamlit run app.py
 │   │   └── scaler.pkl       ✅ Scaler
 │   └── routes/              ✅ API endpoints
 └── frontend/
+    ├── app.py               ✅ Streamlit app chính
     ├── index.html           ✅ Form
     ├── history.html         ✅ History
     ├── js/
@@ -102,7 +105,7 @@ python -m streamlit run app.py
 ## 🎯 Một dòng để chạy
 
 ```bash
-python -m streamlit run app.py
+python -m streamlit run frontend/app.py
 ```
 
 Xong! 🎉
