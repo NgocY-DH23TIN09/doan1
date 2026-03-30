@@ -78,10 +78,16 @@ class PredictionResult(BaseModel):
     features_importance: dict
 
 
+class PatientContext(BaseModel):
+    comorbidities: list[str] = Field(default_factory=list, description="Bệnh nền đi kèm")
+    lifestyle_habits: list[str] = Field(default_factory=list, description="Thói quen sinh hoạt liên quan")
+
+
 class PredictionRecord(BaseModel):
     user_id: Optional[str] = None
     patient_name: Optional[str] = "Ẩn danh"
     input_data: PatientInput
+    patient_context: PatientContext = Field(default_factory=PatientContext)
     prediction: PredictionResult
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 

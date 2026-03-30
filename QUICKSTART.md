@@ -8,11 +8,13 @@
 python -m streamlit run frontend/app.py
 ```
 
-✅ Không cần setup  
+✅ Chạy nhanh để demo dự đoán  
 ✅ Mở browser tự động  
 ✅ Chạy ngay: http://localhost:8501
 
 `app.py` ở root vẫn chạy được nhưng chỉ là launcher trỏ sang `frontend/app.py`.
+
+Lưu ý: chế độ Streamlit không bao gồm đăng nhập, lưu lịch sử MongoDB và quản trị người dùng.
 
 ---
 
@@ -76,6 +78,15 @@ pip install -r requirements-streamlit.txt
 
 # Chạy
 python -m streamlit run frontend/app.py
+```
+
+Nếu cần backend đầy đủ hoặc retrain model:
+
+```bash
+pip install -r backend/requirements.txt
+python -m pytest -q backend
+cd backend
+python ml/train.py
 ```
 
 ---

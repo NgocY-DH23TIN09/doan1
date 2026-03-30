@@ -27,16 +27,17 @@
             <span></span>
         </button>
         <div class="nav-links" id="navLinks">
-            <a href="index.html">🩺 Dự đoán</a>
-            <a href="history.html">📋 Lịch sử</a>
+            <a href="index.html" data-i18n="nav.predict">🩺 Dự đoán</a>
+            <a href="history.html" data-i18n="nav.history">📋 Lịch sử</a>
+            <a href="settings.html" data-i18n="nav.settings">⚙️ Cài đặt</a>
             <div id="auth-section" class="auth-buttons">
-                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'">Đăng ký</button>
-                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'">Đăng nhập</button>
+                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'" data-i18n="auth.register">Đăng ký</button>
+                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'" data-i18n="auth.login">Đăng nhập</button>
             </div>
             <div id="user-section" class="user-profile hidden">
                 <span id="user-name">Người dùng</span>
                 <a href="#" id="admin-link" class="hidden">⚙️ Admin</a>
-                <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Đăng xuất</button>
+                <button class="btn btn-sm btn-outline" onclick="Auth.logout()" data-i18n="auth.logout">Đăng xuất</button>
             </div>
         </div>
     </div>
@@ -45,8 +46,8 @@
 <main class="container main-content result-main">
     <!-- Header -->
     <div class="result-header animate-in">
-        <a href="index.html" class="btn btn-outline btn-sm">← Dự đoán mới</a>
-        <h1 class="result-title">Kết quả phân tích</h1>
+        <a href="index.html" class="btn btn-outline btn-sm" data-i18n="result.newPrediction">← Dự đoán mới</a>
+        <h1 class="result-title" data-i18n="result.title">Kết quả phân tích</h1>
     </div>
 
     <div id="resultContent" class="result-grid">
@@ -96,6 +97,7 @@
 </main>
 
 <script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/layout.js"></script>
 <script src="js/result.js"></script>

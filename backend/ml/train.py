@@ -19,11 +19,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATASET_PATH = REPO_ROOT / "Dataset.csv"
+
 # ═══════════════════════════════════════════════════════════
 # 1. LOAD DATA
 # ═══════════════════════════════════════════════════════════
 print("📊 Loading dataset...")
-df = pd.read_csv("Dataset.csv")
+if not DATASET_PATH.exists():
+    raise FileNotFoundError(f"Dataset không tìm thấy tại: {DATASET_PATH}")
+
+df = pd.read_csv(DATASET_PATH)
 print(f"✅ Dataset shape: {df.shape}")
 print(f"✅ Columns: {df.columns.tolist()}")
 print(f"✅ Class distribution:\n{df['Outcome'].value_counts()}\n")
@@ -36,6 +42,7 @@ print("🔧 Preprocessing...")
 # Replace zero values with column mean (for certain features)
 ZERO_FEATURES = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
 for feature in ZERO_FEATURES:
+    df[feature] = df[feature].astype(float)
     df.loc[df[feature] == 0, feature] = df[df[feature] != 0][feature].mean()
 print(f"✅ Replaced zero values in {ZERO_FEATURES}")
 

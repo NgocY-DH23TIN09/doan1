@@ -39,6 +39,16 @@ GROQ_API_KEY=your-groq-api-key
 SECRET_KEY=your-secret-key
 ```
 
+Nếu muốn tạo sẵn tài khoản admin khi khởi động backend lần đầu, cấu hình thêm:
+
+```env
+BOOTSTRAP_ADMIN_PHONE=0987654321
+BOOTSTRAP_ADMIN_PASSWORD=strong-admin-password
+BOOTSTRAP_ADMIN_NAME=System Administrator
+```
+
+Nếu để trống các biến `BOOTSTRAP_ADMIN_*` thì hệ thống sẽ không tự tạo admin mặc định.
+
 Nếu bạn dùng MongoDB local thay vì Atlas, có thể đổi `MONGODB_URL` thành:
 
 ```env
@@ -69,6 +79,8 @@ Bạn vẫn có thể chạy qua [app.py](app.py) ở root, đây là launcher t
 ```bash
 python -m streamlit run app.py
 ```
+
+Lưu ý: frontend Streamlit hiện chỉ phục vụ luồng dự đoán và xem kết quả gần nhất trong session. Các tính năng đăng nhập, lưu lịch sử và thống kê nhiều bản ghi nằm ở frontend HTML/JS.
 
 ### 6. Mở HTML frontend
 
@@ -105,6 +117,18 @@ Trong môi trường local:
 
 Trong môi trường deploy:
 - HTML frontend ưu tiên gọi API cùng origin, ví dụ `https://doan1-ymhe.onrender.com/api`
+
+## 🛠️ Retrain model
+
+Nếu muốn train lại model local:
+
+```bash
+pip install -r backend/requirements.txt
+cd backend
+python ml/train.py
+```
+
+Script train hiện tự đọc `Dataset.csv` từ thư mục gốc của repo nên không phụ thuộc terminal đang đứng ở đâu trong project.
 
 ## 🤖 API Example
 ```http

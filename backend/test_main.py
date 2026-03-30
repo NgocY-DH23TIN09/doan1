@@ -1,5 +1,6 @@
 """Core test suite for the DiabetesAI API."""
 
+import os
 from types import SimpleNamespace
 
 import pytest
@@ -43,6 +44,9 @@ class FakeDatabase:
 def client(monkeypatch):
     fake_db = FakeDatabase()
 
+    monkeypatch.delenv("BOOTSTRAP_ADMIN_PHONE", raising=False)
+    monkeypatch.delenv("BOOTSTRAP_ADMIN_PASSWORD", raising=False)
+
     async def fake_connect_to_mongo():
         return None
 
@@ -85,15 +89,34 @@ def test_register_success(client):
 
 
 # Test 3: Login
-def test_login_admin(client):
-    """Test login with admin credentials"""
-    payload = {
+def test_login_registered_user(client):
+    """Test login with freshly registered credentials"""
+    register_payload = {
         "phone_number": "0123456789",
+        "full_name": "System Administrator",
+        "age": 30,
+        "gender": "Nam",
         "password": "admin123"
     }
-    response = client.post("/api/auth/login", json=payload)
+    client.post("/api/auth/register", json=register_payload)
+
+    login_payload = {
+        "phone_number": register_payload["phone_number"],
+        "password": register_payload["password"]
+    }
+    response = client.post("/api/auth/login", json=login_payload)
     assert response.status_code == 200
     assert "access_token" in response.json()
+
+
+def test_health_status(client):
+    """Test health endpoint returns service status"""
+    response = client.get("/health")
+    assert response.status_code == 200
+    result = response.json()
+    assert result["status"] in ["ok", "degraded"]
+    assert result["services"]["database"] == "ok"
+    assert result["services"]["model"] == "ok"
 
 
 # Test 4: Prediction - Low Risk

@@ -16,6 +16,7 @@ def record_helper(record) -> dict:
         "id": str(record["_id"]),
         "patient_name": record.get("patient_name", "Ẩn danh"),
         "input_data": record["input_data"],
+        "patient_context": record.get("patient_context", {"comorbidities": [], "lifestyle_habits": []}),
         "prediction": record["prediction"],
         "created_at": record["created_at"].isoformat() if isinstance(record["created_at"], datetime) else record["created_at"]
     }

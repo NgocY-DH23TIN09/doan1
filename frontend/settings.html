@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DiabetesAI | Cài đặt</title>
+    <meta name="description" content="Tùy chỉnh ngôn ngữ, tải báo cáo và xem mạng lưới y tế tham khảo"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#g4)"/>
+                <path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <defs><linearGradient id="g4" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#1e40af"/><stop offset="1" stop-color="#0369a1"/>
+                </linearGradient></defs>
+            </svg>
+            DiabetesAI
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="navLinks" onclick="toggleNav(this)">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" data-i18n="nav.predict">🩺 Dự đoán</a>
+            <a href="history.html" data-i18n="nav.history">📋 Lịch sử</a>
+            <a href="settings.html" class="active" data-i18n="nav.settings">⚙️ Cài đặt</a>
+            <div id="auth-section" class="auth-buttons">
+                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'" data-i18n="auth.register">Đăng ký</button>
+                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'" data-i18n="auth.login">Đăng nhập</button>
+            </div>
+            <div id="user-section" class="user-profile hidden">
+                <span id="user-name">Người dùng</span>
+                <a href="#" id="admin-link" class="hidden">⚙️ Admin</a>
+                <button class="btn btn-sm btn-outline" onclick="Auth.logout()" data-i18n="auth.logout">Đăng xuất</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container main-content settings-main">
+    <div class="dashboard-header animate-in">
+        <div>
+            <h1 class="page-title" data-i18n="settings.title">⚙️ Cài đặt hệ thống</h1>
+            <p class="section-subtitle" data-i18n="settings.subtitle">Tùy chỉnh ngôn ngữ, tải báo cáo và xem nhanh mạng lưới y tế tham khảo.</p>
+        </div>
+        <a href="history.html" class="btn btn-primary" data-i18n="nav.history">📋 Lịch sử</a>
+    </div>
+
+    <div class="settings-grid">
+        <section class="card settings-card animate-in delay-1">
+            <div class="card-header">
+                <div class="card-icon">🌐</div>
+                <div>
+                    <h2 data-i18n="settings.preferences">Tùy chọn hiển thị</h2>
+                    <p class="section-subtitle" data-i18n="settings.preferencesDesc">Đổi ngôn ngữ giao diện giữa tiếng Việt và tiếng Anh. Tùy chọn sẽ được lưu cho các lần mở sau.</p>
+                </div>
+            </div>
+            <div class="card-body settings-card-body">
+                <div class="form-group">
+                    <label for="languageSelect" data-i18n="settings.languageLabel">Ngôn ngữ giao diện</label>
+                    <select id="languageSelect" class="settings-select">
+                        <option value="vi" data-i18n="settings.languageVi">Tiếng Việt</option>
+                        <option value="en" data-i18n="settings.languageEn">English</option>
+                    </select>
+                    <div class="hint" data-i18n="settings.languageHint">Áp dụng ngay cho các trang chính như Dự đoán, Kết quả, Lịch sử và Cài đặt.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card settings-card animate-in delay-1">
+            <div class="card-header">
+                <div class="card-icon">👤</div>
+                <div>
+                    <h2 data-i18n="settings.account">Tài khoản</h2>
+                    <p class="section-subtitle" data-i18n="settings.accountDesc">Quản lý phiên đăng nhập hiện tại và rời khỏi hệ thống an toàn.</p>
+                </div>
+            </div>
+            <div class="card-body settings-card-body">
+                <button id="logoutBtn" class="btn btn-danger btn-lg" data-i18n="settings.logoutBtn">Đăng xuất khỏi thiết bị này</button>
+            </div>
+        </section>
+
+        <section class="card settings-card settings-card-wide animate-in delay-2">
+            <div class="card-header">
+                <div class="card-icon">📁</div>
+                <div>
+                    <h2 data-i18n="settings.report">Xuất báo cáo</h2>
+                    <p class="section-subtitle" data-i18n="settings.reportDesc">Tải lịch sử dự đoán về máy dưới dạng Excel hoặc JSON để lưu trữ, lọc dữ liệu và chia sẻ.</p>
+                </div>
+            </div>
+            <div class="card-body settings-card-body">
+                <div class="settings-action-row">
+                    <button id="exportExcelBtn" class="btn btn-primary" data-i18n="settings.exportExcel">Tải lịch sử Excel (.csv)</button>
+                    <button id="exportJsonBtn" class="btn btn-outline" data-i18n="settings.exportJson">Tải dữ liệu JSON</button>
+                </div>
+                <div class="info-note" data-i18n="settings.reportHint">Trình duyệt sẽ lưu file vào thư mục tải xuống mặc định hoặc nơi bạn chọn. File Excel được xuất dưới dạng CSV UTF-8 để mở trực tiếp bằng Excel.</div>
+            </div>
+        </section>
+
+        <section class="card settings-card settings-card-wide animate-in delay-3">
+            <div class="card-header">
+                <div class="card-icon">🏥</div>
+                <div>
+                    <h2 data-i18n="settings.networks">Mạng lưới y tế toàn quốc</h2>
+                    <p class="section-subtitle" data-i18n="settings.networksDesc">Danh sách tham khảo một số đầu mối y tế lớn theo vùng và kênh hỗ trợ toàn quốc.</p>
+                </div>
+            </div>
+            <div class="card-body settings-card-body">
+                <div class="settings-network-explorer">
+                    <div id="networkRegionTabs" class="network-region-tabs"></div>
+                    <div class="network-search-row">
+                        <input id="networkSearchInput" class="settings-select network-search-input" type="search" data-i18n-placeholder="settings.networkSearchPlaceholder" placeholder="Tìm bệnh viện theo tên..." />
+                        <div class="network-search-hint" data-i18n="settings.networkSearchHint">Chọn vùng trước, sau đó gõ tên bệnh viện để lọc nhanh kết quả.</div>
+                    </div>
+                    <div class="network-results-layout">
+                        <div>
+                            <div class="network-results-title" data-i18n="settings.networkResults">Kết quả trong vùng đã chọn</div>
+                            <div id="networkResults" class="network-results-list"></div>
+                        </div>
+                        <aside id="networkDetail" class="network-detail-card">
+                            <div class="network-detail-empty" data-i18n="settings.networkDetailEmpty">Chọn một cơ sở y tế để xem địa chỉ chi tiết, số điện thoại và nhóm chuyên môn.</div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/settings.js"></script>
+</body>
+</html>

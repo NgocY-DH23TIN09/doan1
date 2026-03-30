@@ -15,7 +15,7 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/register", response_model=UserResponse, summary="Đăng ký tài khoản mới")
-@limiter.limit("3/hour")
+@limiter.limit("10/hour")
 async def register(request: Request, user_in: UserCreate):
     db = require_database()
     
@@ -43,7 +43,7 @@ async def register(request: Request, user_in: UserCreate):
 
 
 @router.post("/login", summary="Đăng nhập")
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
 async def login(request: Request, login_data: LoginRequest):
     db = require_database()
     

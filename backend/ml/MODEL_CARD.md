@@ -97,6 +97,9 @@ Mô hình phân loại nhị phân dự đoán nguy cơ mắc tiểu đường t
 ## Tái tạo Model
 
 ```powershell
+# Cài dependencies ML trước
+pip install -r backend/requirements.txt
+
 # Từ thư mục gốc dự án
 cd backend
 python ml/train.py

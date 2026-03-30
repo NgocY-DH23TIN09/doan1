@@ -27,16 +27,17 @@
             <span></span>
         </button>
         <div class="nav-links" id="navLinks">
-            <a href="index.html">🩺 Dự đoán</a>
-            <a href="history.html" class="active">📋 Lịch sử</a>
+            <a href="index.html" data-i18n="nav.predict">🩺 Dự đoán</a>
+            <a href="history.html" class="active" data-i18n="nav.history">📋 Lịch sử</a>
+            <a href="settings.html" data-i18n="nav.settings">⚙️ Cài đặt</a>
             <div id="auth-section" class="auth-buttons">
-                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'">Đăng ký</button>
-                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'">Đăng nhập</button>
+                <button class="btn btn-sm btn-outline" onclick="window.location.href='index.html?action=register'" data-i18n="auth.register">Đăng ký</button>
+                <button class="btn btn-sm btn-primary" onclick="window.location.href='index.html?action=login'" data-i18n="auth.login">Đăng nhập</button>
             </div>
             <div id="user-section" class="user-profile hidden">
                 <span id="user-name">Người dùng</span>
                 <a href="#" id="admin-link" class="hidden">⚙️ Admin</a>
-                <button class="btn btn-sm btn-outline" onclick="Auth.logout()">Đăng xuất</button>
+                <button class="btn btn-sm btn-outline" onclick="Auth.logout()" data-i18n="auth.logout">Đăng xuất</button>
             </div>
         </div>
     </div>
@@ -45,10 +46,10 @@
 <main class="container main-content history-main">
     <div class="dashboard-header animate-in">
         <div>
-            <h1 class="page-title">📊 Dashboard Thống kê</h1>
-            <p class="section-subtitle">Lịch sử dự đoán và phân tích tổng hợp</p>
+            <h1 class="page-title" data-i18n="history.title">📊 Dashboard Thống kê</h1>
+            <p class="section-subtitle" data-i18n="history.subtitle">Lịch sử dự đoán và phân tích tổng hợp</p>
         </div>
-        <a href="index.html" class="btn btn-primary">🩺 Dự đoán mới</a>
+        <a href="index.html" class="btn btn-primary" data-i18n="history.newPrediction">🩺 Dự đoán mới</a>
     </div>
 
     <!-- Stats cards -->
@@ -75,6 +76,42 @@
             <div class="chart-canvas-wrap">
                 <canvas id="trendChart"></canvas>
             </div>
+        </div>
+    </div>
+
+    <div id="historyAnalysisSection" class="card result-section-card combined-analytics-card animate-in delay-2" style="display:none;">
+        <div class="result-group-header">
+            <div class="result-group-icon">📊</div>
+            <div>
+                <div class="result-group-title">Nhóm biểu đồ phân tích</div>
+                <p class="result-group-text">Phân tích chi tiết của lần dự đoán gần nhất trong lịch sử hiện tại.</p>
+            </div>
+        </div>
+        <div id="historyAnalysisSummary" class="history-analysis-summary"></div>
+        <div class="combined-chart-grid">
+            <section class="analytics-panel">
+                <div class="risk-breakdown-header">
+                    <div class="section-kicker">Phân bố nguy cơ</div>
+                    <h3>Biểu đồ cột mức độ nguy cơ</h3>
+                    <p id="historyRiskNarrative"></p>
+                </div>
+                <div class="risk-bar-chart-wrap">
+                    <canvas id="historyRiskBreakdownChart"></canvas>
+                </div>
+            </section>
+
+            <section class="analytics-panel analytics-panel-compact">
+                <div class="risk-breakdown-header">
+                    <div class="section-kicker">So sánh chuẩn</div>
+                    <h3>So sánh chỉ số với ngưỡng tham chiếu</h3>
+                    <p>Thanh màu thể hiện chỉ số thực tế của bệnh nhân, còn mốc 100% là ngưỡng chuẩn để bạn đối chiếu nhanh.</p>
+                </div>
+                <div id="historyBenchmarkLegend" class="history-benchmark-legend"></div>
+                <div class="benchmark-chart-wrap">
+                    <canvas id="historyBenchmarkChart"></canvas>
+                </div>
+                <div id="historyBenchmarkGrid" class="benchmark-grid"></div>
+            </section>
         </div>
     </div>
 
@@ -124,6 +161,7 @@
 </main>
 
 <script src="js/api.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/layout.js"></script>
 <script src="js/history.js"></script>
