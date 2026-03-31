@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from models import PatientInput, PredictionResult
 import joblib
-import numpy as np
+import pandas as pd
 import os
 from groq import Groq
 from dotenv import load_dotenv
@@ -41,22 +41,6 @@ FEATURE_NAMES = [
     'Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
     'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'
 ]
-
-RECOMMENDATIONS = {
-    "Thấp": (
-        "🟢 Nguy cơ thấp. Duy trì lối sống lành mạnh: ăn uống cân bằng, "
-        "tập thể dục đều đặn ít nhất 30 phút/ngày và kiểm tra sức khỏe định kỳ."
-    ),
-    "Trung bình": (
-        "🟡 Nguy cơ trung bình. Cần chú ý kiểm soát chế độ ăn uống, hạn chế đường và tinh bột. "
-        "Tăng cường vận động và theo dõi chỉ số đường huyết định kỳ 6 tháng/lần."
-    ),
-    "Cao": (
-        "🔴 Nguy cơ cao. Hãy đến gặp bác sĩ chuyên khoa ngay để được tư vấn và xét nghiệm chuyên sâu. "
-        "Kiểm soát nghiêm ngặt chế độ ăn uống, tập thể dục hàng ngày và theo dõi đường huyết thường xuyên."
-    )
-}
-
 
 def build_indicator_assessment(patient: PatientInput, risk_level: str, risk_percentage: float) -> list[str]:
     findings = [
@@ -234,7 +218,7 @@ async def predict(request: Request, patient: PatientInput):
             ) from exc
 
     # Tạo feature vector
-    features = np.array([[
+    features = pd.DataFrame([[
         patient.pregnancies,
         patient.glucose,
         patient.blood_pressure,
@@ -243,7 +227,7 @@ async def predict(request: Request, patient: PatientInput):
         patient.bmi,
         patient.diabetes_pedigree,
         patient.age
-    ]])
+    ]], columns=FEATURE_NAMES)
 
     features_scaled = _scaler.transform(features)
     prob = _model.predict_proba(features_scaled)[0]

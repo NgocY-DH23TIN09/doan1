@@ -525,31 +525,6 @@ function renderResult() {
             </div>
         </div>
 
-        <div class="card result-section-card clinical-insights-card animate-in delay-1">
-            <div class="result-group-header">
-                <div class="result-group-icon">🩺</div>
-                <div>
-                    <div class="result-group-title">Nhận định lâm sàng</div>
-                    <p class="result-group-text">Phần này tách riêng để tập trung vào diễn giải chuyên môn và các điểm cần theo dõi.</p>
-                </div>
-            </div>
-            <div class="risk-breakdown-header">
-                <div class="section-kicker">Clinical Highlights</div>
-                <h3>Phân tích điểm nhấn lâm sàng</h3>
-                <p>Các nhận định dưới đây được rút ra từ những chỉ số nổi bật và yếu tố nguy cơ đã nhập.</p>
-            </div>
-            <div class="insight-grid">
-                ${insights.map(insight => `
-                    <article class="insight-card ${getSeverityClass(insight.severity)}">
-                        <div class="insight-card-top">
-                            <span class="insight-badge ${getSeverityClass(insight.severity)}">${getSeverityLabel(insight.severity)}</span>
-                            <h3>${escapeHtml(insight.title)}</h3>
-                        </div>
-                        <p>${escapeHtml(insight.detail)}</p>
-                    </article>
-                `).join('')}
-            </div>
-        </div>
     `;
 
     // Recommendation
@@ -831,6 +806,9 @@ async function doSave(modal, patientName) {
             }
         };
         await apiFetch('/records', { method: 'POST', body: JSON.stringify(payload) });
+        sessionStorage.removeItem('predictionInput');
+        sessionStorage.removeItem('predictionContext');
+        sessionStorage.removeItem('predictionResult');
         modal.remove();
         showToast('✅ Đã lưu kết quả thành công!');
 

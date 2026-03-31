@@ -422,7 +422,8 @@ function selectRecord(recordId) {
     });
 }
 
-function focusAnalysis(recordId) {
+function focusAnalysis(event, recordId) {
+    event.stopPropagation();
     selectRecord(recordId);
     document.getElementById('historyAnalysisSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -466,7 +467,7 @@ async function loadRecords() {
                     <td data-label="Hành động">
                         <div class="history-row-actions">
                             <span class="history-selected-chip ${r.id === currentSelectedRecordId ? '' : 'hidden'}">Đang phân tích</span>
-                            <button class="btn btn-outline btn-sm" onclick="focusAnalysis('${r.id}'); event.stopPropagation();">📈 Xem phân tích</button>
+                            <button class="btn btn-outline btn-sm" onclick="focusAnalysis(event, '${r.id}')">📈 Xem phân tích</button>
                             <button class="btn btn-danger btn-sm" onclick="deleteRecord(event, '${r.id}')">🗑 Xóa</button>
                         </div>
                     </td>

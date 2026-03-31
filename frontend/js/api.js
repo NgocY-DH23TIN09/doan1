@@ -6,6 +6,10 @@ const LOCAL_API_BASE = `http://${window.location.hostname}:8000/api`;
 const SAME_ORIGIN_API_BASE = `${window.location.origin}/api`;
 const PREFERRED_API_STORAGE_KEY = 'preferred_api_base';
 const RATE_LIMIT_STORAGE_PREFIX = 'rate_limit_until:';
+const DEFAULT_REQUEST_TIMEOUT_MS = 8000;
+const REQUEST_TIMEOUTS_MS = {
+    '/predict': 25000
+};
 
 let activeApiBase = window.API_BASE || localStorage.getItem(PREFERRED_API_STORAGE_KEY) || (isLocalFrontend
     ? LOCAL_API_BASE
@@ -61,7 +65,7 @@ function getCandidateApiBases() {
     }
 
     if (isLocalFrontend) {
-        return uniqueApiBases([LOCAL_API_BASE, activeApiBase, RENDER_API_BASE]);
+        return uniqueApiBases([activeApiBase, LOCAL_API_BASE, RENDER_API_BASE]);
     }
 
     return uniqueApiBases([SAME_ORIGIN_API_BASE, activeApiBase, RENDER_API_BASE]);
@@ -71,17 +75,21 @@ function isNetworkFailure(error) {
     return error?.name === 'AbortError' || error instanceof TypeError;
 }
 
-function getConnectivityHelpMessage(endpoint, lastError) {
-    const onlineBlockedHint = isLocalFrontend
-        ? ' Backend online có thể đang chặn CORS cho origin local hiện tại.'
-        : '';
+function getRequestTimeoutMs(endpoint) {
+    return REQUEST_TIMEOUTS_MS[endpoint] || DEFAULT_REQUEST_TIMEOUT_MS;
+}
 
+function getConnectivityHelpMessage(endpoint, lastError) {
     if (lastError?.name === 'AbortError') {
-        return `Không có backend nào phản hồi kịp thời cho ${endpoint}.${onlineBlockedHint} Hãy kiểm tra backend local hoặc mở ứng dụng qua /web của backend.`;
+        if (endpoint === '/predict') {
+            return `Không có backend nào phản hồi kịp thời cho ${endpoint}. Yêu cầu dự đoán đầu tiên có thể chậm hơn bình thường nếu backend online đang khởi động lại. Hãy kiểm tra backend local hoặc thử lại sau vài giây, hoặc mở ứng dụng qua /web của backend.`;
+        }
+
+        return `Không có backend nào phản hồi kịp thời cho ${endpoint}. Hãy kiểm tra backend local hoặc mở ứng dụng qua /web của backend.`;
     }
 
     if (isLocalFrontend) {
-        return `Không thể kết nối tới backend local tại ${LOCAL_API_BASE}.${onlineBlockedHint} Hãy chạy backend bằng backend/start_backend.ps1 hoặc mở ứng dụng từ http://127.0.0.1:8000/web/.`;
+        return `Không thể kết nối tới backend local tại ${LOCAL_API_BASE}. Hãy chạy backend bằng backend/start_backend.ps1 hoặc mở ứng dụng từ http://127.0.0.1:8000/web/.`;
     }
 
     if (window.location.protocol === 'file:') {
@@ -99,7 +107,7 @@ function shouldRetryWithFallback(response, apiBase) {
 
 async function fetchWithBase(apiBase, endpoint, options) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), getRequestTimeoutMs(endpoint));
     const token = localStorage.getItem('access_token');
     const headers = { 'Content-Type': 'application/json', ...options.headers };
 

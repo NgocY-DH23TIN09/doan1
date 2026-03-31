@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from models import PredictionRecord, PredictionRecordDB, UserRole
 from database import require_database
 from bson import ObjectId
@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional
 import math
 from routes.users import get_current_user
+from utils.limiter import limiter
 
 router = APIRouter()
 
@@ -107,7 +108,8 @@ async def delete_record(record_id: str, current_user: dict = Depends(get_current
 
 
 @router.get("/stats", summary="Thống kê tổng hợp")
-async def get_stats(current_user: dict = Depends(get_current_user)):
+@limiter.limit("60/minute")
+async def get_stats(request: Request, current_user: dict = Depends(get_current_user)):
     db = require_database()
     
     query = {}
